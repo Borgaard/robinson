@@ -1,10 +1,11 @@
-#![feature(core, std_misc, collections, old_io, old_path)]
+#![feature(core, std_misc, collections)]
 
 extern crate getopts;
 extern crate image;
 
 use std::default::Default;
-use std::old_io::fs::File;
+use std::io::Read;
+use std::fs::File;
 
 mod css;
 mod dom;
@@ -42,7 +43,9 @@ fn main() {
             Some(ref filename) => &**filename,
             None => default_filename,
         };
-        File::open(&Path::new(path)).read_to_string().unwrap()
+        let mut str = String::new();
+        File::open(&Path::new(path)).unwrap().read_to_string(&mut str);
+        str
     };
     let html = read_source(matches.opt_str("h"), "examples/test.html");
     let css  = read_source(matches.opt_str("c"), "examples/test.css");
